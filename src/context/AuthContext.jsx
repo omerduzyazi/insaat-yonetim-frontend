@@ -12,54 +12,49 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Optional: Validate token on load
-        const storedToken = localStorage.getItem('token');
-        if (storedToken) {
-            // Here you could decode JWT or fetch user profile
-            setIsAuthenticated(true);
-            setToken(storedToken);
-
-            // Mocking user restore for now
+        // Sayfa yenilendiğinde LocalStorage'dan bilgileri geri yükle
+        const initAuth = () => {
+            const storedToken = localStorage.getItem('token');
             const storedUser = localStorage.getItem('user');
-            if (storedUser) setUser(JSON.parse(storedUser));
-        }
-        setLoading(false);
+
+            if (storedToken && storedUser) {
+                setToken(storedToken);
+                setUser(JSON.parse(storedUser));
+                setIsAuthenticated(true);
+            }
+            setLoading(false);
+        };
+
+        initAuth();
     }, []);
 
     const login = async (email, password) => {
         try {
-            // Try api call first
+            // Backend'e istek at
             const response = await api.post('/auth/login', { email, password });
+            
+            // Backend'den dönen veriyi al (Backend şu formatta dönüyor: { token, user: {...} })
             const { token: newToken, user: userData } = response.data;
 
+            // State'leri güncelle
             setToken(newToken);
             setUser(userData);
             setIsAuthenticated(true);
 
+            // Tarayıcı hafızasına kaydet (Sayfa yenilenince gitmesin diye)
             localStorage.setItem('token', newToken);
             localStorage.setItem('user', JSON.stringify(userData));
 
             return { success: true };
+
         } catch (error) {
-            // Fallback for Development/Demo purposes if API fails
-            console.error("Login API failed, falling back to mock", error);
-
-            // Simple mock validation
-            if (email && password) {
-                const mockToken = "mock-jwt-token-" + Date.now();
-                const mockUser = { id: 1, email, name: "Demo User" };
-
-                setToken(mockToken);
-                setUser(mockUser);
-                setIsAuthenticated(true);
-
-                localStorage.setItem('token', mockToken);
-                localStorage.setItem('user', JSON.stringify(mockUser));
-
-                return { success: true };
-            }
-
-            return { success: false, message: error.response?.data?.message || 'Giriş yapılamadı' };
+            console.error("Giriş Hatası:", error);
+            
+            // Backend'den gelen hata mesajını döndür
+            return { 
+                success: false, 
+                message: error.response?.data?.message || 'Sunucuya bağlanılamadı veya bilgiler hatalı.' 
+            };
         }
     };
 
