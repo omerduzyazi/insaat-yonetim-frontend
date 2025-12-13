@@ -11,6 +11,12 @@ const sequelize = new Sequelize(
         port: process.env.DB_PORT || 5432,
         dialect: 'postgres',
         logging: false,
+        dialectOptions: {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false
+            }
+        },
         pool: {
             max: 5,
             min: 0,
@@ -25,6 +31,8 @@ const connectDB = async () => {
     try {
         await sequelize.authenticate();
         console.log('PostgreSQL Veritabanı Bağlantısı Başarılı.');
+        console.log('Bağlı Olunan Database:', process.env.DB_NAME);
+        console.log('Host:', process.env.DB_HOST);
     } catch (error) {
         console.error('Veritabanına bağlanılamadı:', error);
     }

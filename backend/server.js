@@ -1,14 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const { connectDB, sequelize } = require('./config/db');
+const { connectDB } = require('./config/db');
 
-// Model Importları
-const Project = require('./models/Project');
-const Employee = require('./models/Employee');
-const Role = require('./models/Role')
-const Activity = require('./models/Activity');
-const { Flashlight } = require('lucide-react');
+// Tüm modelleri ve ilişkileri yükle
+const models = require('./models');
 
 dotenv.config();
 
@@ -18,13 +14,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// İLİŞKİ TANIMLARI (ASSOCIATIONS)
-Project.hasMany(Employee, { foreignKey: 'ProjectId', onDelete: 'SET NULL' });
-Employee.belongsTo(Project, { foreignKey: 'ProjectId' });
-
-Role.hasMany(Employee, { foreignKey: 'RoleId' });
-Employee.belongsTo(Role, { foreignKey: 'RoleId' });
-
 
 // Rotalar
 app.use('/api/auth', require('./routes/auth'));
@@ -32,12 +21,14 @@ app.use('/api/projects', require('./routes/projects'));
 app.use('/api/employees', require('./routes/employees'));
 app.use('/api/stats', require('./routes/stats'));
 app.use('/api/roles', require('./routes/roles'));
+app.use('/api/attendance', require('./routes/attendance'));
+app.use('/api/expenses', require('./routes/expenses'));
 
 const PORT = process.env.PORT || 5000;
 
 // Veritabanı Bağlantısı ve Başlatma
 connectDB().then(() => {
-    sequelize.sync({ force: false }).then(() => {
+    models.sequelize.sync({ force: false }).then(() => {
         console.log('Tablolar senkronize edildi (PostgreSQL).');
         app.listen(PORT, () => console.log(`Sunucu ${PORT} portunda çalışıyor`));
     });

@@ -1,26 +1,30 @@
-const { sequelize } = require('./config/db');
-// Modelleri çağırmazsak Sequelize onları tabloya dönüştürmez!
-const Project = require('./models/Project');
-const Employee = require('./models/Employee');
-const Role = require('./models/Role'); 
-
-// İlişkileri burada da tanımlayalım ki Foreign Keyler oluşsun
-Project.hasMany(Employee, { foreignKey: 'ProjectId', onDelete: 'SET NULL' });
-Employee.belongsTo(Project, { foreignKey: 'ProjectId' });
-
-Role.hasMany(Employee, { foreignKey: 'RoleId' });
-Employee.belongsTo(Role, { foreignKey: 'RoleId' });
+// Tüm modelleri ve ilişkileri yükle
+const models = require('./models');
 
 const syncDatabase = async () => {
     try {
         console.log('Veritabanına bağlanılıyor...');
-        await sequelize.authenticate();
-        console.log('Bağlantı başarılı. Tablolar silinip yeniden oluşturuluyor...');
+        await models.sequelize.authenticate();
+        console.log('Bağlantı başarılı. Tablolar silinip yeniden oluşturuluyor...\n');
         
         // force: true -> Her şeyi sil ve baştan yarat
-        await sequelize.sync({ force: true });
+        await models.sequelize.sync({ force: true });
         
-        console.log('BAŞARILI! Roles, Projects ve Employees tabloları oluşturuldu.');
+        console.log('\n✅ BAŞARILI! Tüm tablolar oluşturuldu:');
+        console.log('  1. Users');
+        console.log('  2. Projects');
+        console.log('  3. Employees');
+        console.log('  4. Roles');
+        console.log('  5. Activities');
+        console.log('  6. Attendance (Yoklama)');
+        console.log('  7. Suppliers (Tedarikçiler)');
+        console.log('  8. Materials (Malzemeler)');
+        console.log('  9. Equipment (Ekipman)');
+        console.log('  10. ProjectMaterials (Proje-Malzeme İlişkisi)');
+        console.log('  11. ProjectEquipment (Proje-Ekipman İlişkisi)');
+        console.log('  12. Expenses (Harcamalar)');
+        console.log('  13. Documents (Dökümanlar)\n');
+        
         process.exit(0);
     } catch (error) {
         console.error('HATA OLUŞTU:', error);

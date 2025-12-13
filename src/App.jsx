@@ -3,6 +3,9 @@ import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import Projects from './pages/Projects'
 import Employees from './pages/Employees'
+import Roles from './pages/Roles'
+import Attendance from './pages/Attendance'
+import Expenses from './pages/Expenses'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import ForgotPassword from './pages/ForgotPassword'
@@ -34,6 +37,9 @@ export default function App() {
                             <Route index element={<Dashboard />} />
                             <Route path="projects" element={<Projects />} />
                             <Route path="employees" element={<Employees />} />
+                            <Route path="roles" element={<Roles />} />
+                            <Route path="attendance" element={<Attendance />} />
+                            <Route path="expenses" element={<Expenses />} />
                         </Route>
                     </Routes>
                 </BrowserRouter>
