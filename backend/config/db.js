@@ -1,20 +1,21 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config(); // .env dosyasını okumak için
 
-// MSSQL Bağlantı Ayarları
+// PostgreSQL Bağlantı Ayarları
 const sequelize = new Sequelize(
-    process.env.DB_NAME,     // Veritabanı Adı (insaatyonetim)
-    process.env.DB_USER,     // Kullanıcı Adı (Genelde 'sa' veya Windows Auth kullanıyorsanız boş geçilebilir ama Node.js için SQL Auth önerilir)
-    process.env.DB_PASS,     // Şifre
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASS,
     {
-        host: process.env.DB_SERVER, // Server adı (localhost)
-        dialect: 'mssql',
-        logging: false, // Konsolu kirletmemesi için SQL sorgularını gizler
-        dialectOptions: {
-            options: {
-                encrypt: false, // Yerel sunucuda genelde false olur
-                trustServerCertificate: true // Sertifika hatası almamak için
-            }
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT || 5432,
+        dialect: 'postgres',
+        logging: false,
+        pool: {
+            max: 5,
+            min: 0,
+            acquire: 30000,
+            idle: 10000
         }
     }
 );
@@ -23,7 +24,7 @@ const sequelize = new Sequelize(
 const connectDB = async () => {
     try {
         await sequelize.authenticate();
-        console.log('MSSQL Veritabanı Bağlantısı Başarılı.');
+        console.log('PostgreSQL Veritabanı Bağlantısı Başarılı.');
     } catch (error) {
         console.error('Veritabanına bağlanılamadı:', error);
     }

@@ -38,7 +38,7 @@ const PORT = process.env.PORT || 5000;
 // Veritabanı Bağlantısı ve Başlatma
 connectDB().then(() => {
     sequelize.sync({ force: false }).then(() => {
-        console.log('Tablolar senkronize edildi (SQL Server).');
+        console.log('Tablolar senkronize edildi (PostgreSQL).');
         app.listen(PORT, () => console.log(`Sunucu ${PORT} portunda çalışıyor`));
     });
 });
