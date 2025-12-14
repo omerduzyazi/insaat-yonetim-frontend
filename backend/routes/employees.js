@@ -11,7 +11,7 @@ router.get('/', auth, async (req, res) => {
         const employees = await Employee.findAll({
             where: { userId: req.user.id },
             include: [
-                { model: Project, attributes: ['id', 'name'] },
+                { model: Project, attributes: ['id', 'name', 'city', 'district'] },
                 { model: Role, attributes: ['id', 'name'] }
             ],
             order: [['createdAt', 'DESC']]

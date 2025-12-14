@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
-import { FileText, TrendingUp, DollarSign, Users, Calendar, Building2, Loader2, Download } from 'lucide-react'
+import { FileText, TrendingUp, DollarSign, Users, Calendar, Building2, Loader2, Download, Code, X } from 'lucide-react'
 import api from '../services/api'
 import { useToast } from '../context/ToastContext'
+import Portal from '../components/Portal'
 
 export default function Reports() {
     const [loading, setLoading] = useState(false)
     const [activeReport, setActiveReport] = useState('project-expenses')
     const [reportData, setReportData] = useState([])
+    const [currentQuery, setCurrentQuery] = useState('')
+    const [showQueryModal, setShowQueryModal] = useState(false)
     const { showToast } = useToast()
 
     const reports = [
@@ -31,11 +34,22 @@ export default function Reports() {
         setLoading(true)
         try {
             const response = await api.get(`/reports/${reportId}`)
-            setReportData(response.data)
+            const result = response.data
+            
+            // Backend artık { data: [...], query: "..." } formatında dönüyor
+            if (result.data) {
+                setReportData(result.data)
+                setCurrentQuery(result.query || '')
+            } else {
+                // Eski format için fallback
+                setReportData(result)
+                setCurrentQuery('')
+            }
         } catch (error) {
             console.error('Report fetch error:', error)
             showToast('Rapor yüklenirken hata oluştu.', 'error')
             setReportData([])
+            setCurrentQuery('')
         } finally {
             setLoading(false)
         }
@@ -68,14 +82,24 @@ export default function Reports() {
                     </h1>
                     <p className="text-slate-600 mt-1">Pure SQL sorguları ile detaylı analizler</p>
                 </div>
-                <button
-                    onClick={downloadCSV}
-                    disabled={reportData.length === 0}
-                    className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    <Download size={18} />
-                    CSV İndir
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={downloadCSV}
+                        disabled={reportData.length === 0}
+                        className="btn-primary flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <Download size={18} />
+                        CSV İndir
+                    </button>
+                    <button
+                        onClick={() => setShowQueryModal(true)}
+                        disabled={!currentQuery}
+                        className="px-4 py-2 bg-slate-700 text-white rounded-xl hover:bg-slate-800 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <Code size={18} />
+                        SQL Görüntüle
+                    </button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -172,6 +196,74 @@ export default function Reports() {
                     </div>
                 </div>
             </div>
-        </div>
+
+            {/* SQL Query Modal */}
+            {showQueryModal && currentQuery && (
+                <Portal>
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowQueryModal(false)}></div>
+                        
+                        <div className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden">
+                            {/* Modal Header */}
+                            <div className="bg-gradient-to-br from-slate-700 to-slate-900 p-6">
+                                <div className="flex items-center justify-between text-white">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                                            <Code size={28} />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-2xl font-bold">SQL Sorgusu</h2>
+                                            <p className="text-slate-300 text-sm mt-1">
+                                                {reports.find(r => r.id === activeReport)?.name}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowQueryModal(false)}
+                                        className="p-2 hover:bg-white/20 rounded-xl transition-colors"
+                                    >
+                                        <X size={24} />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Modal Content */}
+                            <div className="p-6 overflow-y-auto max-h-[calc(80vh-180px)]">
+                                <div className="bg-slate-900 rounded-xl p-6 overflow-x-auto">
+                                    <pre className="text-sm text-green-400 font-mono whitespace-pre-wrap">
+                                        {currentQuery}
+                                    </pre>
+                                </div>
+                                
+                                <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                    <h4 className="font-semibold text-blue-900 mb-2 text-sm">💡 SQL Teknikleri</h4>
+                                    <p className="text-xs text-blue-800">
+                                        {reports.find(r => r.id === activeReport)?.sql}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Modal Footer */}
+                            <div className="sticky bottom-0 p-6 bg-slate-50 border-t border-slate-200 flex gap-3">
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(currentQuery)
+                                        showToast('SQL sorgusu panoya kopyalandı!', 'success')
+                                    }}
+                                    className="flex-1 px-4 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition-colors font-semibold"
+                                >
+                                    Kopyala
+                                </button>
+                                <button
+                                    onClick={() => setShowQueryModal(false)}
+                                    className="flex-1 px-4 py-3 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-colors font-semibold"
+                                >
+                                    Kapat
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </Portal>
+            )}        </div>
     )
 }

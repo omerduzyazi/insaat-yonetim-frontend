@@ -6,6 +6,11 @@
   body {
     @apply bg-slate-50 text-slate-900 selection:bg-primary-100 selection:text-primary-700;
   }
+  
+  /* Modal açıkken body scroll'unu engelle */
+  body.modal-open {
+    overflow: hidden;
+  }
 }
 
 @layer components {

@@ -183,26 +183,26 @@ async function seedDatabase() {
 
         // ==================== ÇALIŞANLAR ====================
         const employees = [
-            { name: 'Mehmet Yılmaz', phone: '0532 111 2233', address: 'Çankaya/Ankara', status: 'Aktif', RoleId: createdRoles[0].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
-            { name: 'Ayşe Kara', phone: '0533 222 3344', address: 'Kızılay/Ankara', status: 'Aktif', RoleId: createdRoles[1].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
-            { name: 'Ahmet Demir', phone: '0534 333 4455', address: 'Keçiören/Ankara', status: 'Aktif', RoleId: createdRoles[2].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
-            { name: 'Fatma Aydın', phone: '0535 444 5566', address: 'Eryaman/Ankara', status: 'Aktif', RoleId: createdRoles[2].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
-            { name: 'Ali Şahin', phone: '0536 555 6677', address: 'Ulus/Ankara', status: 'Aktif', RoleId: createdRoles[3].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
-            { name: 'Zeynep Çelik', phone: '0537 666 7788', address: 'Çankaya/Ankara', status: 'Aktif', RoleId: createdRoles[4].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
-            { name: 'Mustafa Arslan', phone: '0538 777 8899', address: 'Kızılay/Ankara', status: 'Aktif', RoleId: createdRoles[5].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
-            { name: 'Elif Özkan', phone: '0539 888 9900', address: 'Keçiören/Ankara', status: 'Aktif', RoleId: createdRoles[6].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
-            { name: 'Hasan Yıldız', phone: '0532 999 0011', address: 'Eryaman/Ankara', status: 'Aktif', RoleId: createdRoles[7].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
-            { name: 'Merve Koç', phone: '0533 000 1122', address: 'Ulus/Ankara', status: 'Aktif', RoleId: createdRoles[8].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
-            { name: 'Emre Aksoy', phone: '0534 111 2233', address: 'Çankaya/Ankara', status: 'Aktif', RoleId: createdRoles[9].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
-            { name: 'Selin Güneş', phone: '0535 222 3344', address: 'Kızılay/Ankara', status: 'Aktif', RoleId: createdRoles[10].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
-            { name: 'Burak Tekin', phone: '0536 333 4455', address: 'Keçiören/Ankara', status: 'Aktif', RoleId: createdRoles[10].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
-            { name: 'Deniz Polat', phone: '0537 444 5566', address: 'Eryaman/Ankara', status: 'Aktif', RoleId: createdRoles[10].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
-            { name: 'Can Erdem', phone: '0538 555 6677', address: 'Ulus/Ankara', status: 'Aktif', RoleId: createdRoles[10].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
-            { name: 'Gizem Acar', phone: '0539 666 7788', address: 'Çankaya/Ankara', status: 'Aktif', RoleId: createdRoles[11].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
-            { name: 'Oğuz Eren', phone: '0532 777 8899', address: 'Kızılay/Ankara', status: 'Aktif', RoleId: createdRoles[11].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
-            { name: 'Ece Yavuz', phone: '0533 888 9900', address: 'Keçiören/Ankara', status: 'Aktif', RoleId: createdRoles[12].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
-            { name: 'Barış Öztürk', phone: '0534 999 0011', address: 'Eryaman/Ankara', status: 'İzinli', RoleId: createdRoles[10].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
-            { name: 'Seda Kurt', phone: '0535 000 1122', address: 'Ulus/Ankara', status: 'Pasif', RoleId: createdRoles[10].id, ProjectId: null, userId: adminUser.id }
+            { name: 'Mehmet Yılmaz', phone: '+905321112233', address: 'Çankaya/Ankara', status: 'Aktif', RoleId: createdRoles[0].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
+            { name: 'Ayşe Kara', phone: '+905332223344', address: 'Kızılay/Ankara', status: 'Aktif', RoleId: createdRoles[1].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
+            { name: 'Ahmet Demir', phone: '+905343334455', address: 'Keçiören/Ankara', status: 'Aktif', RoleId: createdRoles[2].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
+            { name: 'Fatma Aydın', phone: '+905354445566', address: 'Eryaman/Ankara', status: 'Aktif', RoleId: createdRoles[2].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
+            { name: 'Ali Şahin', phone: '+905365556677', address: 'Ulus/Ankara', status: 'Aktif', RoleId: createdRoles[3].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
+            { name: 'Zeynep Çelik', phone: '+905376667788', address: 'Çankaya/Ankara', status: 'Aktif', RoleId: createdRoles[4].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
+            { name: 'Mustafa Arslan', phone: '+905387778899', address: 'Kızılay/Ankara', status: 'Aktif', RoleId: createdRoles[5].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
+            { name: 'Elif Özkan', phone: '+905398889900', address: 'Keçiören/Ankara', status: 'Aktif', RoleId: createdRoles[6].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
+            { name: 'Hasan Yıldız', phone: '+905329990011', address: 'Eryaman/Ankara', status: 'Aktif', RoleId: createdRoles[7].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
+            { name: 'Merve Koç', phone: '+905330001122', address: 'Ulus/Ankara', status: 'Aktif', RoleId: createdRoles[8].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
+            { name: 'Emre Aksoy', phone: '+905341122233', address: 'Çankaya/Ankara', status: 'Aktif', RoleId: createdRoles[9].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
+            { name: 'Selin Güneş', phone: '+905352223344', address: 'Kızılay/Ankara', status: 'Aktif', RoleId: createdRoles[10].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
+            { name: 'Burak Tekin', phone: '+905363344455', address: 'Keçiören/Ankara', status: 'Aktif', RoleId: createdRoles[10].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
+            { name: 'Deniz Polat', phone: '+905374455566', address: 'Eryaman/Ankara', status: 'Aktif', RoleId: createdRoles[10].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
+            { name: 'Can Erdem', phone: '+905385556677', address: 'Ulus/Ankara', status: 'Aktif', RoleId: createdRoles[10].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
+            { name: 'Gizem Acar', phone: '+905396667788', address: 'Çankaya/Ankara', status: 'Aktif', RoleId: createdRoles[11].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
+            { name: 'Oğuz Eren', phone: '+905327778899', address: 'Kızılay/Ankara', status: 'Aktif', RoleId: createdRoles[11].id, ProjectId: createdProjects[1].id, userId: adminUser.id },
+            { name: 'Ece Yavuz', phone: '+905338889900', address: 'Keçiören/Ankara', status: 'Aktif', RoleId: createdRoles[12].id, ProjectId: createdProjects[2].id, userId: adminUser.id },
+            { name: 'Barış Öztürk', phone: '+905349900011', address: 'Eryaman/Ankara', status: 'İzinli', RoleId: createdRoles[10].id, ProjectId: createdProjects[0].id, userId: adminUser.id },
+            { name: 'Seda Kurt', phone: '+905350001122', address: 'Ulus/Ankara', status: 'Pasif', RoleId: createdRoles[10].id, ProjectId: null, userId: adminUser.id }
         ];
 
         const createdEmployees = [];
@@ -217,9 +217,9 @@ async function seedDatabase() {
 
         // ==================== TEDARİKÇİLER ====================
         const suppliers = [
-            { name: 'Akçelik İnşaat Malzemeleri', contact_person: 'İbrahim Akçelik', phone: '0312 444 5566', email: 'info@akcelik.com', address: 'Ostim/Ankara', userId: adminUser.id },
-            { name: 'Demirtaş Hırdavat', contact_person: 'Hakan Demirtaş', phone: '0312 555 6677', email: 'demirtas@hirdavat.com', address: 'İvedik/Ankara', userId: adminUser.id },
-            { name: 'Bayrak Elektrik', contact_person: 'Mehmet Bayrak', phone: '0312 666 7788', email: 'bayrak@elektrik.com', address: 'Demetevler/Ankara', userId: adminUser.id }
+            { name: 'Akçelik İnşaat Malzemeleri', contact_person: 'İbrahim Akçelik', phone: '+90 312 444 55 66', email: 'info@akcelik.com', address: 'Ostim/Ankara', userId: adminUser.id },
+            { name: 'Demirtaş Hırdavat', contact_person: 'Hakan Demirtaş', phone: '+90 312 555 66 77', email: 'demirtas@hirdavat.com', address: 'İvedik/Ankara', userId: adminUser.id },
+            { name: 'Bayrak Elektrik', contact_person: 'Mehmet Bayrak', phone: '+90 312 666 77 88', email: 'bayrak@elektrik.com', address: 'Demetevler/Ankara', userId: adminUser.id }
         ];
 
         const createdSuppliers = [];
@@ -273,18 +273,26 @@ async function seedDatabase() {
         const attendanceRecords = [];
         const today = new Date();
         
-        // Son 30 gün için yoklama kayıtları
-        for (let i = 0; i < 30; i++) {
+        // Son 60 gün için yoklama kayıtları - TÜM çalışanlar için
+        for (let i = 0; i < 60; i++) {
             const date = new Date(today);
             date.setDate(date.getDate() - i);
             const dateStr = date.toISOString().split('T')[0];
 
-            for (let j = 0; j < Math.min(15, createdEmployees.length); j++) {
-                const employee = createdEmployees[j];
+            // Tüm çalışanlar için yoklama kaydı oluştur
+            for (const employee of createdEmployees) {
                 if (!employee.ProjectId) continue;
 
-                const statuses = ['Geldi', 'Geldi', 'Geldi', 'Geldi', 'Gelmedi', 'İzinli'];
-                const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+                // Hafta sonu kontrolü
+                const dayOfWeek = date.getDay();
+                if (dayOfWeek === 0 || dayOfWeek === 6) continue; // Pazar=0, Cumartesi=6
+
+                // %80 geldi, %10 gelmedi, %10 izinli
+                const rand = Math.random();
+                let randomStatus;
+                if (rand < 0.80) randomStatus = 'Geldi';
+                else if (rand < 0.90) randomStatus = 'Gelmedi';
+                else randomStatus = 'İzinli';
                 
                 attendanceRecords.push({
                     EmployeeId: employee.id,
@@ -302,18 +310,46 @@ async function seedDatabase() {
         console.log(`✅ ${attendanceRecords.length} yoklama kaydı oluşturuldu`);
 
         // ==================== HARCAMALAR ====================
-        const expenses = [
-            { ProjectId: createdProjects[0].id, category: 'Malzeme', description: 'Çimento ve demir tedariki', amount: 125000, expense_date: new Date('2024-10-15'), payment_method: 'Havale', status: 'Ödendi', userId: adminUser.id },
-            { ProjectId: createdProjects[0].id, category: 'Maaş', description: 'Ekim ayı personel maaşları', amount: 85000, expense_date: new Date('2024-11-01'), payment_method: 'Havale', status: 'Ödendi', userId: adminUser.id },
-            { ProjectId: createdProjects[1].id, category: 'Ekipman', description: 'Vinç kiralama (aylık)', amount: 45000, expense_date: new Date('2024-11-10'), payment_method: 'Çek', status: 'Ödendi', userId: adminUser.id },
-            { ProjectId: createdProjects[1].id, category: 'Malzeme', description: 'Elektrik malzemeleri', amount: 32000, expense_date: new Date('2024-11-20'), payment_method: 'Kredi Kartı', status: 'Ödendi', userId: adminUser.id },
-            { ProjectId: createdProjects[2].id, category: 'Ulaşım', description: 'Malzeme nakliyesi', amount: 12500, expense_date: new Date('2024-11-25'), payment_method: 'Nakit', status: 'Ödendi', userId: adminUser.id },
-            { ProjectId: createdProjects[2].id, category: 'Maaş', description: 'Kasım ayı maaşları', amount: 95000, expense_date: new Date('2024-12-01'), payment_method: 'Havale', status: 'Ödendi', userId: adminUser.id },
-            { ProjectId: createdProjects[0].id, category: 'Yemek', description: 'Personel yemek hizmeti', amount: 8500, expense_date: new Date('2024-12-05'), payment_method: 'Nakit', status: 'Ödendi', userId: adminUser.id },
-            { ProjectId: createdProjects[1].id, category: 'Diğer', description: 'Ofis sarf malzemeleri', amount: 3200, expense_date: new Date('2024-12-08'), payment_method: 'Kredi Kartı', status: 'Onaylandı', userId: adminUser.id },
-            { ProjectId: createdProjects[2].id, category: 'Malzeme', description: 'Sıva ve boya malzemeleri', amount: 28000, expense_date: new Date('2024-12-10'), payment_method: 'Havale', status: 'Beklemede', userId: adminUser.id },
-            { ProjectId: createdProjects[3].id, category: 'Ekipman', description: 'Alet bakım ve onarım', amount: 15500, expense_date: new Date('2024-12-12'), payment_method: 'Çek', status: 'Beklemede', userId: adminUser.id }
-        ];
+        const expenses = [];
+        const categories = ['Malzeme', 'Maaş', 'Ekipman', 'Ulaşım', 'Yemek', 'Diğer'];
+        const paymentMethods = ['Nakit', 'Kredi Kartı', 'Havale', 'Çek'];
+        const statuses = ['Ödendi', 'Ödendi', 'Ödendi', 'Onaylandı', 'Beklemede'];
+        
+        // Son 6 ay için harcamalar
+        for (let month = 0; month < 6; month++) {
+            const expenseDate = new Date(today);
+            expenseDate.setMonth(expenseDate.getMonth() - month);
+            
+            // Her proje için harcama
+            for (const project of createdProjects) {
+                // Her ay 3-5 harcama kaydı
+                const recordCount = 3 + Math.floor(Math.random() * 3);
+                
+                for (let i = 0; i < recordCount; i++) {
+                    const category = categories[Math.floor(Math.random() * categories.length)];
+                    let amount;
+                    
+                    // Kategoriye göre tutar
+                    if (category === 'Maaş') amount = 50000 + Math.floor(Math.random() * 100000);
+                    else if (category === 'Malzeme') amount = 20000 + Math.floor(Math.random() * 80000);
+                    else if (category === 'Ekipman') amount = 15000 + Math.floor(Math.random() * 50000);
+                    else if (category === 'Ulaşım') amount = 5000 + Math.floor(Math.random() * 20000);
+                    else if (category === 'Yemek') amount = 3000 + Math.floor(Math.random() * 10000);
+                    else amount = 2000 + Math.floor(Math.random() * 15000);
+                    
+                    expenses.push({
+                        ProjectId: project.id,
+                        category: category,
+                        description: `${category} gideri - ${expenseDate.toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}`,
+                        amount: amount,
+                        expense_date: new Date(expenseDate.getFullYear(), expenseDate.getMonth(), 5 + Math.floor(Math.random() * 20)),
+                        payment_method: paymentMethods[Math.floor(Math.random() * paymentMethods.length)],
+                        status: statuses[Math.floor(Math.random() * statuses.length)],
+                        userId: adminUser.id
+                    });
+                }
+            }
+        }
 
         await Expense.bulkCreate(expenses, { ignoreDuplicates: true });
         console.log(`✅ ${expenses.length} harcama kaydı oluşturuldu`);

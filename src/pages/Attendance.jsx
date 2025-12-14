@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Calendar, PlusCircle, Edit2, Trash2, Search, Loader2, Users, Building2, Clock, AlertCircle } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 import api from '../services/api'
 import { useToast } from '../context/ToastContext'
+import Portal from '../components/Portal'
 
 export default function Attendance() {
+    const [searchParams] = useSearchParams()
     const [attendances, setAttendances] = useState([])
     const [employees, setEmployees] = useState([])
     const [projects, setProjects] = useState([])
@@ -13,6 +16,8 @@ export default function Attendance() {
     const [isEditing, setIsEditing] = useState(false)
     const [editId, setEditId] = useState(null)
     const [filterProject, setFilterProject] = useState('')
+    const [filterStatus, setFilterStatus] = useState(searchParams.get('status') || '')
+    const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0])
     
     const [formData, setFormData] = useState({
         EmployeeId: '',
@@ -131,9 +136,24 @@ export default function Attendance() {
         }
     }
 
-    const filteredAttendances = filterProject
-        ? attendances.filter(a => a.ProjectId === parseInt(filterProject))
-        : attendances
+    const filteredAttendances = attendances.filter(a => {
+        let matches = true
+        if (filterProject) {
+            matches = matches && a.ProjectId === parseInt(filterProject)
+        }
+        if (filterStatus) {
+            // İzinli filtresi hem İzinli hem Raporlu'yu kapsasın
+            if (filterStatus === 'İzinli') {
+                matches = matches && (a.status === 'İzinli' || a.status === 'Raporlu')
+            } else {
+                matches = matches && a.status === filterStatus
+            }
+        }
+        if (filterDate) {
+            matches = matches && a.date === filterDate
+        }
+        return matches
+    })
 
     return (
         <div className="space-y-6">
@@ -157,17 +177,43 @@ export default function Attendance() {
 
             {/* Filter */}
             <div className="bg-white p-4 rounded-xl border border-slate-200">
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Projeye Göre Filtrele</label>
-                <select
-                    value={filterProject}
-                    onChange={(e) => setFilterProject(e.target.value)}
-                    className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500"
-                >
-                    <option value="">Tüm Projeler</option>
-                    {projects.map(p => (
-                        <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                </select>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">Tarihe Göre Filtrele</label>
+                        <input
+                            type="date"
+                            value={filterDate}
+                            onChange={(e) => setFilterDate(e.target.value)}
+                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">Projeye Göre Filtrele</label>
+                        <select
+                            value={filterProject}
+                            onChange={(e) => setFilterProject(e.target.value)}
+                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500"
+                        >
+                            <option value="">Tüm Projeler</option>
+                            {projects.map(p => (
+                                <option key={p.id} value={p.id}>{p.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">Duruma Göre Filtrele</label>
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500"
+                        >
+                            <option value="">Tüm Durumlar</option>
+                            <option value="Geldi">✓ Geldi</option>
+                            <option value="Gelmedi">✗ Gelmedi</option>
+                            <option value="İzinli">📅 İzinli/Raporlu</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             {/* Attendance List */}
@@ -243,8 +289,9 @@ export default function Attendance() {
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto">
+                <Portal>
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                         <h2 className="text-2xl font-bold text-slate-800 mb-6">
                             {isEditing ? 'Yoklama Düzenle' : 'Yeni Yoklama Ekle'}
                         </h2>
@@ -368,6 +415,7 @@ export default function Attendance() {
                         </form>
                     </div>
                 </div>
+                </Portal>
             )}
         </div>
     )

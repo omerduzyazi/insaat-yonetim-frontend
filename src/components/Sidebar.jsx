@@ -22,7 +22,7 @@ export default function Sidebar() {
     }
 
     return (
-        <aside className="w-72 bg-dark-950 text-white flex flex-col h-full shadow-2xl relative overflow-hidden">
+        <aside className="w-72 bg-dark-950 text-white flex flex-col h-full shadow-2xl relative overflow-hidden z-0">
             {/* Background Gradient */}
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-primary-900/20 to-transparent pointer-events-none" />
 

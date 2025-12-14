@@ -12,17 +12,20 @@ router.get('/project-expenses', async (req, res) => {
             SELECT 
                 p.id,
                 p.name AS project_name,
-                p.location,
+                p.city,
+                p.district,
+                p.address,
                 COUNT(e.id) AS expense_count,
                 COALESCE(SUM(e.amount), 0) AS total_expenses
             FROM "Projects" p
             LEFT JOIN "Expenses" e ON p.id = e."ProjectId"
-            GROUP BY p.id, p.name, p.location
+            GROUP BY p.id, p.name, p.city, p.district, p.address
+            HAVING COUNT(e.id) > 0
             ORDER BY total_expenses DESC
         `;
         
         const results = await sequelize.query(query, { type: QueryTypes.SELECT });
-        res.json(results);
+        res.json({ data: results, query: query.trim() });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
@@ -48,7 +51,7 @@ router.get('/expense-by-category', async (req, res) => {
         `;
         
         const results = await sequelize.query(query, { type: QueryTypes.SELECT });
-        res.json(results);
+        res.json({ data: results, query: query.trim() });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
@@ -63,20 +66,21 @@ router.get('/employee-attendance-stats', async (req, res) => {
             SELECT 
                 e.id,
                 e.name AS employee_name,
-                r.title AS role_title,
+                COALESCE(r.name, 'Belirtilmemiş') AS role_title,
                 COUNT(CASE WHEN a.status = 'Geldi' THEN 1 END) AS days_present,
                 COUNT(CASE WHEN a.status = 'Gelmedi' THEN 1 END) AS days_absent,
-                COUNT(CASE WHEN a.status = 'İzinli' THEN 1 END) AS days_leave,
+                COUNT(CASE WHEN a.status NOT IN ('Geldi', 'Gelmedi') THEN 1 END) AS days_leave,
                 COUNT(a.id) AS total_records
             FROM "Employees" e
             LEFT JOIN "Roles" r ON e."RoleId" = r.id
             LEFT JOIN "Attendances" a ON e.id = a."EmployeeId"
-            GROUP BY e.id, e.name, r.title
+            GROUP BY e.id, e.name, r.name
+            HAVING COUNT(a.id) > 0
             ORDER BY days_present DESC
         `;
         
         const results = await sequelize.query(query, { type: QueryTypes.SELECT });
-        res.json(results);
+        res.json({ data: results, query: query.trim() });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
@@ -92,7 +96,9 @@ router.get('/project-details/:projectId', async (req, res) => {
             SELECT 
                 p.id,
                 p.name,
-                p.location,
+                p.city,
+                p.district,
+                p.address,
                 p.budget,
                 p.start_date,
                 p.end_date,
@@ -105,14 +111,14 @@ router.get('/project-details/:projectId', async (req, res) => {
             LEFT JOIN "Employees" e ON p.id = e."ProjectId"
             LEFT JOIN "Expenses" ex ON p.id = ex."ProjectId"
             WHERE p.id = :projectId
-            GROUP BY p.id, p.name, p.location, p.budget, p.start_date, p.end_date, p.status
+            GROUP BY p.id, p.name, p.city, p.district, p.address, p.budget, p.start_date, p.end_date, p.status
         `;
         
         const results = await sequelize.query(query, { 
             replacements: { projectId },
             type: QueryTypes.SELECT 
         });
-        res.json(results[0] || {});
+        res.json({ data: results[0] || {}, query: query.trim().replace(':projectId', projectId) });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
@@ -126,17 +132,20 @@ router.get('/monthly-expenses', async (req, res) => {
         const query = `
             SELECT 
                 TO_CHAR(expense_date, 'YYYY-MM') AS month,
+                TO_CHAR(expense_date, 'Month YYYY') AS month_name,
                 COUNT(*) AS transaction_count,
                 SUM(amount) AS total_amount,
-                category
+                AVG(amount) AS average_amount,
+                MIN(amount) AS min_amount,
+                MAX(amount) AS max_amount
             FROM "Expenses"
             WHERE expense_date >= CURRENT_DATE - INTERVAL '6 months'
-            GROUP BY TO_CHAR(expense_date, 'YYYY-MM'), category
-            ORDER BY month DESC, total_amount DESC
+            GROUP BY TO_CHAR(expense_date, 'YYYY-MM'), TO_CHAR(expense_date, 'Month YYYY')
+            ORDER BY month DESC
         `;
         
         const results = await sequelize.query(query, { type: QueryTypes.SELECT });
-        res.json(results);
+        res.json({ data: results, query: query.trim() });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
@@ -152,25 +161,25 @@ router.get('/top-active-employees', async (req, res) => {
                 e.id,
                 e.name,
                 e.phone,
-                r.title AS role,
+                r.name AS role,
                 COUNT(a.id) AS attendance_count,
                 ROUND(
-                    (COUNT(CASE WHEN a.status = 'Geldi' THEN 1 END)::numeric / 
-                    NULLIF(COUNT(a.id), 0)) * 100, 
+                    CAST(COUNT(CASE WHEN a.status = 'Geldi' THEN 1 END) AS DECIMAL) / 
+                    NULLIF(COUNT(a.id), 0) * 100, 
                     2
                 ) AS attendance_rate
             FROM "Employees" e
             LEFT JOIN "Roles" r ON e."RoleId" = r.id
             LEFT JOIN "Attendances" a ON e.id = a."EmployeeId"
-            WHERE e.status = 'Aktif'
-            GROUP BY e.id, e.name, e.phone, r.title
+            WHERE e."isActive" = true
+            GROUP BY e.id, e.name, e.phone, r.name
             HAVING COUNT(a.id) > 0
             ORDER BY attendance_rate DESC
             LIMIT 10
         `;
         
         const results = await sequelize.query(query, { type: QueryTypes.SELECT });
-        res.json(results);
+        res.json({ data: results, query: query.trim() });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
@@ -178,24 +187,24 @@ router.get('/top-active-employees', async (req, res) => {
 });
 
 // ==================== SQL SORGU 7: Rol Bazlı Maaş Analizi ====================
-// JOIN, AVG, GROUP BY
+// JOIN, COUNT, GROUP BY - Rollerin günlük ücret ve çalışan sayılarına göre aylık maliyet analizi
 router.get('/role-salary-analysis', async (req, res) => {
     try {
         const query = `
             SELECT 
-                r.title AS role_title,
-                r.daily_rate,
-                COUNT(e.id) AS employee_count,
-                r.daily_rate * 30 AS estimated_monthly_cost_per_employee,
-                (r.daily_rate * 30 * COUNT(e.id)) AS total_monthly_cost
+                r.name AS role_title,
+                COALESCE(r.default_daily_rate, 0) AS daily_rate,
+                COUNT(CASE WHEN e."isActive" = true THEN 1 END) AS employee_count,
+                ROUND(CAST(COALESCE(r.default_daily_rate, 0) AS NUMERIC) * 30, 2) AS estimated_monthly_cost_per_employee,
+                ROUND(CAST(COALESCE(r.default_daily_rate, 0) AS NUMERIC) * 30 * COUNT(CASE WHEN e."isActive" = true THEN 1 END), 2) AS total_monthly_cost
             FROM "Roles" r
-            LEFT JOIN "Employees" e ON r.id = e."RoleId" AND e.status = 'Aktif'
-            GROUP BY r.id, r.title, r.daily_rate
+            LEFT JOIN "Employees" e ON r.id = e."RoleId"
+            GROUP BY r.id, r.name, r.default_daily_rate
             ORDER BY total_monthly_cost DESC
         `;
         
         const results = await sequelize.query(query, { type: QueryTypes.SELECT });
-        res.json(results);
+        res.json({ data: results, query: query.trim() });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
@@ -224,11 +233,14 @@ router.get('/pending-expenses', async (req, res) => {
             FROM "Expenses" e
             INNER JOIN "Projects" p ON e."ProjectId" = p.id
             WHERE e.status IN ('Beklemede', 'Onaylandı')
+                AND CURRENT_DATE - e.expense_date <= 45
+                AND CURRENT_DATE - e.expense_date > 7
             ORDER BY days_pending DESC
+            LIMIT 20
         `;
         
         const results = await sequelize.query(query, { type: QueryTypes.SELECT });
-        res.json(results);
+        res.json({ data: results, query: query.trim() });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
@@ -236,32 +248,32 @@ router.get('/pending-expenses', async (req, res) => {
 });
 
 // ==================== SQL SORGU 9: Proje Performans Karşılaştırması ====================
-// Multiple aggregations, complex calculations
+// Multiple aggregations, complex calculations - Projelerin bütçe kullanımı ve ekip analizi
 router.get('/project-performance', async (req, res) => {
     try {
         const query = `
             SELECT 
                 p.name AS project_name,
                 p.status,
-                p.budget,
-                COALESCE(SUM(e.amount), 0) AS total_expenses,
-                ROUND((COALESCE(SUM(e.amount), 0) / NULLIF(p.budget, 0)) * 100, 2) AS budget_usage_percentage,
+                CAST(COALESCE(p.budget, 0) AS NUMERIC) AS budget,
+                CAST(COALESCE(SUM(e.amount), 0) AS NUMERIC) AS total_expenses,
+                CASE 
+                    WHEN COALESCE(p.budget, 0) > 0 THEN 
+                        ROUND((CAST(COALESCE(SUM(e.amount), 0) AS NUMERIC) / CAST(p.budget AS NUMERIC)) * 100, 2)
+                    ELSE 0
+                END AS budget_usage_percentage,
                 COUNT(DISTINCT emp.id) AS team_size,
                 COUNT(DISTINCT e.id) AS expense_transactions,
-                CASE 
-                    WHEN p.end_date < CURRENT_DATE AND p.status != 'Tamamlandı' THEN 'Gecikmiş'
-                    WHEN p.status = 'Tamamlandı' THEN 'Tamamlandı'
-                    ELSE 'Zamanında'
-                END AS timeline_status
+                p.status AS timeline_status
             FROM "Projects" p
             LEFT JOIN "Expenses" e ON p.id = e."ProjectId"
-            LEFT JOIN "Employees" emp ON p.id = emp."ProjectId"
-            GROUP BY p.id, p.name, p.status, p.budget, p.end_date
-            ORDER BY budget_usage_percentage DESC
+            LEFT JOIN "Employees" emp ON p.id = emp."ProjectId" AND emp."isActive" = true
+            GROUP BY p.id, p.name, p.status, p.budget
+            ORDER BY total_expenses DESC
         `;
         
         const results = await sequelize.query(query, { type: QueryTypes.SELECT });
-        res.json(results);
+        res.json({ data: results, query: query.trim() });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
@@ -269,29 +281,29 @@ router.get('/project-performance', async (req, res) => {
 });
 
 // ==================== SQL SORGU 10: Haftalık Yoklama Özeti ====================
-// Date functions, aggregation by week
+// Date functions, aggregation by week - Son 8 haftanın haftalık yoklama istatistikleri
 router.get('/weekly-attendance', async (req, res) => {
     try {
         const query = `
             SELECT 
-                TO_CHAR(attendance_date, 'IYYY-IW') AS week,
+                TO_CHAR(date, 'IYYY-IW') AS week,
                 COUNT(*) AS total_records,
                 COUNT(CASE WHEN status = 'Geldi' THEN 1 END) AS present_count,
                 COUNT(CASE WHEN status = 'Gelmedi' THEN 1 END) AS absent_count,
-                COUNT(CASE WHEN status = 'İzinli' THEN 1 END) AS leave_count,
+                COUNT(CASE WHEN status IN ('İzinli', 'Raporlu') THEN 1 END) AS leave_count,
                 ROUND(
-                    (COUNT(CASE WHEN status = 'Geldi' THEN 1 END)::numeric / 
-                    NULLIF(COUNT(*), 0)) * 100, 
+                    CAST((COUNT(CASE WHEN status = 'Geldi' THEN 1 END) * 100.0) AS NUMERIC) / 
+                    NULLIF(COUNT(*), 0), 
                     2
                 ) AS attendance_percentage
             FROM "Attendances"
-            WHERE attendance_date >= CURRENT_DATE - INTERVAL '8 weeks'
-            GROUP BY TO_CHAR(attendance_date, 'IYYY-IW')
+            WHERE date >= CURRENT_DATE - INTERVAL '8 weeks'
+            GROUP BY TO_CHAR(date, 'IYYY-IW')
             ORDER BY week DESC
         `;
         
         const results = await sequelize.query(query, { type: QueryTypes.SELECT });
-        res.json(results);
+        res.json({ data: results, query: query.trim() });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
@@ -319,7 +331,7 @@ router.get('/most-expensive-projects', async (req, res) => {
         `;
         
         const results = await sequelize.query(query, { type: QueryTypes.SELECT });
-        res.json(results);
+        res.json({ data: results, query: query.trim() });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
@@ -327,29 +339,33 @@ router.get('/most-expensive-projects', async (req, res) => {
 });
 
 // ==================== SQL SORGU 12: Çalışan Maliyet Raporu (BONUS) ====================
-// Complex calculation with multiple tables
+// Complex calculation with multiple tables - Çalışanların toplam maliyeti ve çalışma istatistikleri
 router.get('/employee-cost-report', async (req, res) => {
     try {
         const query = `
             SELECT 
                 e.id,
                 e.name AS employee_name,
-                r.title AS role,
-                r.daily_rate,
-                COUNT(a.id) FILTER (WHERE a.status = 'Geldi') AS days_worked,
-                SUM(a.worked_hours) AS total_hours,
-                (r.daily_rate * COUNT(a.id) FILTER (WHERE a.status = 'Geldi')) AS total_cost
+                r.name AS role,
+                CAST(COALESCE(r.default_daily_rate, 0) AS NUMERIC) AS default_daily_rate,
+                COUNT(CASE WHEN a.status = 'Geldi' THEN 1 END) AS days_worked,
+                CAST(COALESCE(SUM(a.worked_hours), 0) AS NUMERIC) AS total_hours,
+                ROUND(
+                    CAST(COALESCE(r.default_daily_rate, 0) AS NUMERIC) * 
+                    COUNT(CASE WHEN a.status = 'Geldi' THEN 1 END), 
+                    2
+                ) AS total_cost
             FROM "Employees" e
             INNER JOIN "Roles" r ON e."RoleId" = r.id
             LEFT JOIN "Attendances" a ON e.id = a."EmployeeId"
-            WHERE e.status = 'Aktif'
-            GROUP BY e.id, e.name, r.title, r.daily_rate
-            HAVING COUNT(a.id) FILTER (WHERE a.status = 'Geldi') > 0
+            WHERE e."isActive" = true
+            GROUP BY e.id, e.name, r.name, r.default_daily_rate
+            HAVING COUNT(CASE WHEN a.status = 'Geldi' THEN 1 END) > 0
             ORDER BY total_cost DESC
         `;
         
         const results = await sequelize.query(query, { type: QueryTypes.SELECT });
-        res.json(results);
+        res.json({ data: results, query: query.trim() });
     } catch (error) {
         console.error('SQL Query Error:', error);
         res.status(500).json({ message: 'Sorgu hatası', error: error.message });
