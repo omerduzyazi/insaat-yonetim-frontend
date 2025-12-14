@@ -23,6 +23,7 @@ app.use('/api/stats', require('./routes/stats'));
 app.use('/api/roles', require('./routes/roles'));
 app.use('/api/attendance', require('./routes/attendance'));
 app.use('/api/expenses', require('./routes/expenses'));
+app.use('/api/reports', require('./routes/reports')); // Pure SQL raporlama endpoint'leri
 
 const PORT = process.env.PORT || 5000;
 

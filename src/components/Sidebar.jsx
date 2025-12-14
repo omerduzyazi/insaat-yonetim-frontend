@@ -1,4 +1,4 @@
-import { Home, HardHat, Building2, Users, Briefcase, Calendar, DollarSign, Settings, LogOut, ChevronRight } from 'lucide-react'
+import { Home, HardHat, Building2, Users, Briefcase, Calendar, DollarSign, FileText, Settings, LogOut, ChevronRight } from 'lucide-react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -13,6 +13,7 @@ export default function Sidebar() {
         { name: 'Roller', icon: Briefcase, path: '/roles' },
         { name: 'Yoklama', icon: Calendar, path: '/attendance' },
         { name: 'Harcamalar', icon: DollarSign, path: '/expenses' },
+        { name: 'SQL Raporları', icon: FileText, path: '/reports' },
     ]
 
     const handleLogout = () => {

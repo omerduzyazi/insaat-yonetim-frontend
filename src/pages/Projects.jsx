@@ -14,7 +14,9 @@ export default function Projects() {
     
     const [formData, setFormData] = useState({ 
         name: '', 
-        location: '', 
+        city: '', 
+        district: '', 
+        address: '', 
         budget: '', 
         status: 'Planlama', 
         start_date: new Date().toISOString().substring(0, 10) 
@@ -44,7 +46,9 @@ export default function Projects() {
     const resetForm = () => {
         setFormData({ 
             name: '', 
-            location: '', 
+            city: '', 
+            district: '', 
+            address: '', 
             budget: '', 
             status: 'Planlama', 
             start_date: new Date().toISOString().substring(0, 10) 
@@ -56,7 +60,9 @@ export default function Projects() {
     const handleEditClick = (project) => {
         setFormData({
             name: project.name,
-            location: project.location,
+            city: project.city,
+            district: project.district,
+            address: project.address || '',
             budget: project.budget || '',
             status: project.status,
             // Tarih formatını uyumlu hale getiriyoruz
@@ -155,6 +161,8 @@ export default function Projects() {
                         <thead className="bg-slate-50/80 border-b border-slate-200">
                             <tr>
                                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Proje Adı</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Şehir</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">İlçe</th>
                                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Durum</th>
                                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Başlangıç</th>
                                 <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Bütçe (₺)</th>
@@ -174,7 +182,7 @@ export default function Projects() {
                                 ))
                             ) : projects.length === 0 ? (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-12 text-center text-slate-500">
+                                    <td colSpan="7" className="px-6 py-12 text-center text-slate-500">
                                         <div className="flex flex-col items-center justify-center gap-2">
                                             <AlertCircle size={32} className="text-slate-300" />
                                             <p>Henüz kayıtlı proje yok.</p>
@@ -192,10 +200,14 @@ export default function Projects() {
                                     <tr key={proj.id} className="hover:bg-slate-50/80 transition-colors group">
                                         <td className="px-6 py-4 font-medium text-slate-900">
                                             <div className="font-semibold">{proj.name}</div>
-                                            <div className="text-xs text-slate-500 flex items-center gap-1 mt-1">
-                                                <MapPin size={12} className="text-slate-400" /> {proj.location}
-                                            </div>
+                                            {proj.address && (
+                                                <div className="text-xs text-slate-500 flex items-center gap-1 mt-1">
+                                                    <MapPin size={12} className="text-slate-400" /> {proj.address}
+                                                </div>
+                                            )}
                                         </td>
+                                        <td className="px-6 py-4 text-slate-600">{proj.city}</td>
+                                        <td className="px-6 py-4 text-slate-600">{proj.district}</td>
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStatusStyle(proj.status)}`}>
                                                 {proj.status}
@@ -260,30 +272,40 @@ export default function Projects() {
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Konum</label>
-                                        <input type="text" placeholder="Örn: İstanbul, Sarıyer" className="input-field"
-                                            value={formData.location} onChange={e => setFormData({ ...formData, location: e.target.value })} required />
+                                        <label className="block text-sm font-medium text-slate-700 mb-1">Şehir (İl)</label>
+                                        <input type="text" placeholder="Örn: İstanbul" className="input-field"
+                                            value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} required />
                                     </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-1">İlçe</label>
+                                        <input type="text" placeholder="Örn: Sarıyer" className="input-field"
+                                            value={formData.district} onChange={e => setFormData({ ...formData, district: e.target.value })} required />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Adres (Opsiyonel)</label>
+                                    <input type="text" placeholder="Örn: Bahçeşehir Mahallesi, 1. Cadde No: 12" className="input-field"
+                                        value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-1">Başlangıç Tarihi</label>
                                         <input type="date" className="input-field"
                                             value={formData.start_date} onChange={e => setFormData({ ...formData, start_date: e.target.value })} required />
                                     </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm font-medium text-slate-700 mb-1">Bütçe (₺)</label>
                                         <input type="number" placeholder="5000000" className="input-field"
                                             value={formData.budget} onChange={e => setFormData({ ...formData, budget: e.target.value })} />
                                     </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">Durum</label>
-                                        <select className="input-field" value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })}>
-                                            <option value="Planlama">Planlama</option>
-                                            <option value="Devam Ediyor">Devam Ediyor</option>
-                                            <option value="Tamamlandı">Tamamlandı</option>
-                                        </select>
-                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Durum</label>
+                                    <select className="input-field" value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })}>
+                                        <option value="Planlama">Planlama</option>
+                                        <option value="Devam Ediyor">Devam Ediyor</option>
+                                        <option value="Tamamlandı">Tamamlandı</option>
+                                    </select>
                                 </div>
                             </div>
 

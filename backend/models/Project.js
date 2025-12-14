@@ -11,8 +11,17 @@ const Project = sequelize.define('Project', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    location: {
-        type: DataTypes.STRING
+    city: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    district: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    address: {
+        type: DataTypes.TEXT,
+        allowNull: true
     },
     budget: {
         type: DataTypes.FLOAT, // Para birimi için FLOAT veya DECIMAL
