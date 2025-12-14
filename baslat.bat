@@ -1,57 +1,53 @@
 @echo off
-TITLE Insaat Yonetim Sistemi - Otomatik Kurulum ve Baslatma
-color 0B
+TITLE Insaat Yonetim Sistemi - Otomatik Baslatma
+color 0A
 
 echo ===================================================
-echo      INSAAT YONETIM SISTEMI HAZIRLANIYOR...
+echo      INSAAT YONETIM SISTEMI BASLATILIYOR...
 echo ===================================================
 echo.
 
-:: --- 1. BACKEND KONTROLU VE KURULUMU ---
-echo [1/4] Backend paketleri kontrol ediliyor...
-if not exist "backend\node_modules" (
-    echo        UYARI: Backend paketleri eksik. Ilk kurulum yapiliyor...
-    echo        Lutfen bekleyin, bu islem internet hizina gore zaman alabilir.
-    cd backend
-    call npm install
-    cd ..
-    echo        Tamamlandi.
-) else (
-    echo        Backend hazir.
+:: --- 1. PROJE KONTROLU ---
+echo [1/3] Proje yapisi kontrol ediliyor...
+if not exist "backend" (
+    echo        HATA: Backend klasoru bulunamadi!
+    echo        Lutfen dogru dizinde oldugunuzdan emin olun.
+    pause
+    exit /b 1
 )
-echo.
-
-:: --- 2. FRONTEND KONTROLU VE KURULUMU ---
-echo [2/4] Frontend paketleri kontrol ediliyor...
-if not exist "node_modules" (
-    echo        UYARI: Frontend paketleri eksik. Ilk kurulum yapiliyor...
-    echo        Lutfen bekleyin, bu islem internet hizina gore zaman alabilir.
-    call npm install
-    echo        Tamamlandi.
-) else (
-    echo        Frontend hazir.
+if not exist "src" (
+    echo        HATA: Frontend klasoru bulunamadi!
+    pause
+    exit /b 1
 )
+echo        Proje yapisi tamam.
 echo.
 
-:: --- 3. BACKEND BASLATMA ---
-echo [3/4] Backend Sunucusu baslatiliyor...
-start "Backend - API Sunucusu" cmd /k "cd backend && npm run dev"
+:: --- 2. BACKEND BASLATMA ---
+echo [2/3] Backend sunucusu baslatiliyor...
+start "Backend API (Port 5000)" cmd /k "cd backend && npm run dev"
+timeout /t 2 >nul
 
-:: --- 4. FRONTEND BASLATMA ---
-echo [4/4] Frontend Arayuzu baslatiliyor...
-start "Frontend - Arayuz" cmd /k "npm run dev"
+:: --- 3. FRONTEND BASLATMA ---
+echo [3/3] Frontend arayuzu baslatiliyor...
+start "Frontend UI (Port 5173)" cmd /k "npm run dev"
 
-:: --- 5. TARAYICIYI ACMA ---
+:: --- TARAYICI ---
 echo.
-echo Sunucularin ayaga kalkmasi bekleniyor (5 saniye)...
-timeout /t 5 >nul
+echo Sunucularin baslamasi bekleniyor (8 saniye)...
+timeout /t 8 >nul
 
-echo Tarayici aciliyor: http://localhost:5173
+echo Tarayici aciliyor...
 start http://localhost:5173
 
 echo.
 echo ===================================================
-echo            SISTEM BASARIYLA ACILDI!
-echo      Pencereleri kapatmadan calismaya devam edin.
+echo         SISTEM BASARIYLA BASLATILDI!
+echo.
+echo   Backend API: http://localhost:5000
+echo   Frontend UI: http://localhost:5173
+echo.
+echo   Pencereleri kapatmayin!
 echo ===================================================
+echo.
 pause

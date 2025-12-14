@@ -1,7 +1,9 @@
 {
     "name": "insaat-yonetim-frontend",
+    "description": "Modern insaat projelerini yonetmek icin gelistirilmis full-stack web uygulamasi",
+    "version": "1.0.0",
+    "author": "Dogukan",
     "private": true,
-    "version": "0.0.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
